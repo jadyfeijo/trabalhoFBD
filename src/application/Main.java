@@ -1,32 +1,42 @@
 package application;
 
-import java.sql.Connection;
-import java.util.List;
+import java.io.IOException;
 
-import db.DB;
-import model.dao.ConsultasDao;
-import model.dao.DaoFactory;
-import model.entities.Prazo;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.stage.Stage;
 
-public class Main {
-
-	public static void main(String[] args) {
-		
-		/*Connection conn = DB.getConnection();
-		System.out.println("connected");
-		DB.closeConnection();
-		System.out.println("disconnected");*/
-
-		ConsultasDao cons = DaoFactory.createConsultasDao();
-		
-		System.out.println("Teste consulta:\n");
-		
-		List<Prazo> list = cons.mostrarAndamento("00111800000002", "00000000001");
-		
-		for(Prazo p: list) {
-			System.out.println(p.getDescricao());
+public class Main extends Application {
+	
+	private static Scene mainScene;
+	@Override
+	public void start(Stage primaryStage) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/MainView.fxml"));
+			ScrollPane scrollPane = loader.load();
+			
+			scrollPane.setFitToHeight(true);
+			scrollPane.setFitToWidth(true);
+			
+			mainScene = new Scene(scrollPane);
+			primaryStage.setScene(mainScene);
+			primaryStage.setTitle("Sample JavaFX application");
+			primaryStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		
 		
 	}
 
-}
+	public static Scene getMainScene()
+	{
+		return mainScene;
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
+	}

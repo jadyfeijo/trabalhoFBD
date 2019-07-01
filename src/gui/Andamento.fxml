@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="490.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.AndamentoController">
+   <children>
+      <Label text="Consultar Andamento do Processo do Cliente">
+         <VBox.margin>
+            <Insets left="10.0" top="5.0" />
+         </VBox.margin>
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <ToolBar prefHeight="40.0" prefWidth="200.0">
+         <items>
+            <Label text="CPF do cliente:" />
+            <TextField fx:id="txtcpfCliente" />
+            <Label text="Número do Processo:">
+               <padding>
+                  <Insets left="15.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="txtnumProc" />
+            <Button fx:id="btPerquisar" mnemonicParsing="false" onAction="#onBtPesquisar" text="Pesquisar" />
+         </items>
+      </ToolBar>
+      <TableView fx:id="tableViewPrazo" prefHeight="200.0" prefWidth="200.0">
+        <columns>
+          <TableColumn fx:id="tableColumnDescricao" prefWidth="244.79999387264252" text="Descrição" />
+          <TableColumn fx:id="tableColumnData" minWidth="0.0" prefWidth="106.4000244140625" text="Data" />
+        </columns>
+      </TableView>
+   </children>
+</VBox>
