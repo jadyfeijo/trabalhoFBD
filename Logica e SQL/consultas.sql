@@ -19,11 +19,17 @@ where cpf='00000000001';
 /*Número do processo, vara, data final e descrição dos prazos em aberto  de um determinado advogado.*/
 select oanumprocesso,vara,datafim,descricao
 from ProcessosAdv natural join processo join prazo on (numprocesso=num_processo)
-where datafim>now() and oab='RS074402'
+where datafim>now() and oab='RS074402';
 
+/*Nome e telefone dos clientes que tem um procedimento marcado, mas não possuem comunicado.*/
 
-
-
+select nome, ddd,numero,cpf
+from parte join cliente on (cpfcnpj=cpf) join telefone using (cpf)
+where cpf not in (
+	select cpf
+    from ProcessosCliente join procedimento on (num_processo=numprocesso) natural join comunicado);
+    
+     
 
 create view SentencaCom as select count(numprocesso) from processo natural join sentenca group by comarca;
 

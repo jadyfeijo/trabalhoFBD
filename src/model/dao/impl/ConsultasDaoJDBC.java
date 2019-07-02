@@ -201,11 +201,7 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 					"from parte join cliente on (cpfcnpj=cpf) join telefone using (cpf)\r\n" + 
 					"where cpf not in (\r\n" + 
 					"	select cpf\r\n" + 
-					"    from ProcessosCliente join procedimento on (num_processo=numprocesso) natural join comunicado);\r\n" + 
-					"    "
-					
-
-
+					"    from ProcessosCliente join procedimento on (num_processo=numprocesso) natural join comunicado);\r\n"
 					);
 			
 			rs=st.executeQuery();
