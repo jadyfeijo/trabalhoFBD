@@ -10,7 +10,6 @@ public class Prazo {
 	private Date datarealizacao;
 	
 	public Prazo() {
-		super();
 	}
 
 	public Prazo(Date dataInicio, Date dataFim, String descricao) {

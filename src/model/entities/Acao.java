@@ -63,6 +63,15 @@ public class Acao {
 	public void removeAutor(Parte cliente) {
 		autor.remove(cliente);
 	}
+
+	public List<Parte> getAutor() {
+		return autor;
+	}
+
+	public List<Parte> getReu() {
+		return reu;
+	}
 		
+	
 }
 	

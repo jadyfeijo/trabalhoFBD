@@ -1,12 +1,11 @@
 package model.entities;
 
-import java.time.Instant;
 import java.util.Date;
 
 public class Procedimento {
 
 	private Date dia;
-	private Instant horario;
+	private Date horario;
 	private Endereco endereco;
 	private Colaborador marcador;
 	private Comunicado comunicado;
@@ -14,7 +13,7 @@ public class Procedimento {
 	public Procedimento() {
 	}
 
-	public Procedimento(Date dia, Instant horario, Endereco endereco, Colaborador marcador, Comunicado comunicado) {
+	public Procedimento(Date dia, Date horario, Endereco endereco, Colaborador marcador, Comunicado comunicado) {
 		super();
 		this.dia = dia;
 		this.horario = horario;
@@ -31,11 +30,11 @@ public class Procedimento {
 		this.dia = dia;
 	}
 
-	public Instant getHorario() {
+	public Date getHorario() {
 		return horario;
 	}
 
-	public void setHorario(Instant horario) {
+	public void setHorario(Date horario) {
 		this.horario = horario;
 	}
 

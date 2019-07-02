@@ -78,4 +78,10 @@ public class Processo {
 		
 		audiencias.remove(audiencia);
 	}
+
+	public List<Audiencia> getAudiencias() {
+		return audiencias;
+	}
+	
+	
 }

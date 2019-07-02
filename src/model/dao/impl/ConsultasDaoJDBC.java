@@ -1,12 +1,11 @@
 package model.dao.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,18 +33,23 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 	}
 
 	@Override
-	public List<Acao> mostrarAudienciasAdv(String oab, Date dia) {
+	public List<Acao> mostrarAudienciasAdv(String oab, java.util.Date dia) {
 		PreparedStatement st =null;
 		ResultSet rs=null;
 		
 		try {
-			st=conn.prepareStatement(
-					""
+			st=conn.prepareStatement("select numprocesso,hora,dia,pautor.nome, preu.nome,comarca,vara\r\n" + 
+					"from acao natural join autor join parte as pautor on (pautor.cpfcnpj=cpfAutor) natural join reu join parte as preu on (preu.cpfcnpj=cpfReu)  join processo using (codacao) join procedimento on (numprocesso=num_processo)\r\n" + 
+					"where procedimento.tipo='Audiencia' and dia=? and codacao in (\r\n" + 
+					"	select codacao\r\n" + 
+					"    from representacao join acao on(cod_acao=codacao) natural join advogado\r\n" + 
+					"    where oab=?);"
+					
 					
 					);
 			
-			st.setString(1, oab);
-			st.setDate(1, (java.sql.Date) dia);
+			st.setString(2, oab);
+			st.setDate(1, new java.sql.Date(dia.getTime()));
 			
 			rs=st.executeQuery();
 			List<Acao> list = new ArrayList<>();
@@ -57,7 +61,7 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 				
 				lc.setComarca(rs.getString("comarca"));
 				lc.setVara(rs.getString("vara"));
-				aud.setHorario(rs.getTime("hora").toInstant());			
+				aud.setHorario(new java.util.Date (rs.getTime("hora").getTime()));			
 				aud.setLocal(lc);
 				
 				Processo proc = new Processo();
@@ -96,7 +100,9 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 		ResultSet rs=null;
 		
 		try {
-			st=conn.prepareStatement(""
+			st=conn.prepareStatement("select numprocesso,vara,datafim,descricao\r\n" + 
+					"from ProcessosAdv natural join processo join prazo on (numprocesso=num_processo)\r\n" + 
+					"where datafim>now() and oab=?"
 					
 					
 					);
@@ -112,16 +118,17 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 				
 				if(proc==null) {
 					
+					proc=new Processo();
 					Local lc=new Local();
 					lc.setVara(rs.getString("vara"));
-					proc.setNumero(rs.getString("numero"));
+					proc.setNumero(rs.getString("numprocesso"));
 					proc.setLocal(lc);
 					
 				}
 				
 				Prazo prazo = new Prazo();
 				prazo.setDescricao(rs.getString("descricao"));
-				prazo.setDataFim(rs.getDate("datafim"));
+				prazo.setDataFim(new java.util.Date(rs.getDate("datafim").getTime()));
 
 				proc.addPrazo(prazo);
 				
@@ -166,7 +173,9 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 			
 			while(rs.next()) {
 				
-				Prazo prazo = PrazoDaoJDBC.instantiatePrazo(rs);
+				Prazo prazo = new Prazo();
+				prazo.setDescricao(rs.getString("descricao"));
+				prazo.setDataInicio(new java.util.Date (rs.getDate("datainicio").getTime()));
 				list.add(prazo);
 			}
 			
@@ -314,7 +323,7 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 				lc.setVara(rs.getString("vara"));
 				
 				aud.setDia(rs.getDate("dia"));
-				aud.setHorario(rs.getTime("hora").toInstant());			
+				aud.setHorario(new java.util.Date (rs.getTime("hora").getTime()));			
 				aud.setLocal(lc);
 				
 				list.add(aud);
