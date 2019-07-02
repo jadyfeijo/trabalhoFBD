@@ -1,5 +1,6 @@
 package model.entities;
 
+import java.time.Instant;
 import java.util.Date;
 
 import model.entities.enums.TipoAudiencia;
@@ -7,17 +8,19 @@ import model.entities.enums.TipoAudiencia;
 public class Audiencia extends Procedimento {
 	
 	private TipoAudiencia tipo;
-	private Advogado realizador;	
+	private Advogado realizador;
+	private Local local;
 	
 	public Audiencia() {
 		super();
 	}
-	
-	public Audiencia(Date dia, Date horario, String local, Colaborador marcador, Comunicado comunicado,
-			TipoAudiencia tipo, Advogado realizador) {
-		super(dia, horario, local, marcador, comunicado);
+
+	public Audiencia(Date dia, Instant horario, Endereco endereco, Colaborador marcador, Comunicado comunicado,
+			TipoAudiencia tipo, Advogado realizador, Local local) {
+		super(dia, horario, endereco, marcador, comunicado);
 		this.tipo = tipo;
 		this.realizador = realizador;
+		this.local = local;
 	}
 
 	public TipoAudiencia getTipo() {
@@ -34,5 +37,13 @@ public class Audiencia extends Procedimento {
 
 	public void setRealizador(Advogado realizador) {
 		this.realizador = realizador;
+	}
+
+	public Local getLocal() {
+		return local;
+	}
+
+	public void setLocal(Local local) {
+		this.local = local;
 	}
 }

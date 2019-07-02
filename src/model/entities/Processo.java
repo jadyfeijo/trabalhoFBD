@@ -1,13 +1,13 @@
 package model.entities;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Processo {
 
 	private String numero;
-	private int vara;
-	private String comarca;
+	private Local local;
 	private String tipo;
 	private Sentenca sentenca;
 	private List<Prazo> prazos = new ArrayList<>();
@@ -17,35 +17,18 @@ public class Processo {
 		super();
 	}
 
-	public Processo(String numero, int vara, String comarca, String tipo) {
+	public Processo(String numero, Local local, String tipo) {
 		this.numero = numero;
-		this.vara = vara;
-		this.comarca = comarca;
+		this.local = local;
 		this.tipo = tipo;
 	}
-
+	
 	public String getNumero() {
 		return numero;
 	}
 
 	public void setNumero(String numero) {
 		this.numero = numero;
-	}
-
-	public int getVara() {
-		return vara;
-	}
-
-	public void setVara(int vara) {
-		this.vara = vara;
-	}
-
-	public String getComarca() {
-		return comarca;
-	}
-
-	public void setComarca(String comarca) {
-		this.comarca = comarca;
 	}
 
 	public String getTipo() {
@@ -62,6 +45,14 @@ public class Processo {
 
 	public void setSentenca(Sentenca sentenca) {
 		this.sentenca = sentenca;
+	}
+
+	public Local getLocal() {
+		return local;
+	}
+
+	public void setLocal(Local local) {
+		this.local = local;
 	}
 
 	public List<Prazo> getPrazos() {

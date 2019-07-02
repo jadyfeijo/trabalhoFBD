@@ -16,13 +16,18 @@ public class Cliente extends Parte{
 		super();
 	}
 
-	public Cliente(String rg, String nascionalidade, String email, Telefone telefone) {
-		super();
+	
+
+	public Cliente(String id, String nome, Endereco endereco, String rg, String nascionalidade, String email, Telefone telefone) {
+		super(id, nome, endereco);
 		this.rg = rg;
 		this.nascionalidade = nascionalidade;
 		this.email = email;
 		this.telefone = telefone;
+		this.acoes = acoes;
 	}
+
+
 
 	public String getRg() {
 		return rg;

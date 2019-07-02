@@ -1,5 +1,8 @@
 package model.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import model.entities.enums.Area;
 
 public class Acao {
@@ -7,8 +10,8 @@ public class Acao {
 	private Area area;
 	private Processo processo;
 	private Advogado procurador;
-	private Parte parteContraria;
-	
+	private List<Parte> autor= new ArrayList<>();
+	private List<Parte> reu = new ArrayList<>();
 	
 	public Acao() {
 		super();
@@ -43,6 +46,22 @@ public class Acao {
 
 	public void setProcurador(Advogado procurador) {
 		this.procurador = procurador;
+	}
+	
+	public void addReu(Parte parte) {
+		reu.add(parte);
+	}
+	
+	public void removeReu(Parte parte) {
+		reu.remove(parte);
+	}
+	
+	public void addAutor(Parte cliente) {
+		autor.add(cliente);
+	}
+	
+	public void removeAutor(Parte cliente) {
+		autor.remove(cliente);
 	}
 		
 }

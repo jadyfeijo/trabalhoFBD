@@ -1,29 +1,27 @@
 package model.entities;
 
+import java.time.Instant;
 import java.util.Date;
 
 public class Procedimento {
 
 	private Date dia;
-	private Date horario;
-	private String local;
+	private Instant horario;
+	private Endereco endereco;
 	private Colaborador marcador;
 	private Comunicado comunicado;
 		
 	public Procedimento() {
-		super();
 	}
 
-	public Procedimento(Date dia, Date horario, String local, Colaborador marcador, Comunicado comunicado) {
+	public Procedimento(Date dia, Instant horario, Endereco endereco, Colaborador marcador, Comunicado comunicado) {
 		super();
 		this.dia = dia;
 		this.horario = horario;
-		this.local = local;
+		this.endereco = endereco;
 		this.marcador = marcador;
 		this.comunicado = comunicado;
 	}
-
-
 
 	public Date getDia() {
 		return dia;
@@ -33,20 +31,20 @@ public class Procedimento {
 		this.dia = dia;
 	}
 
-	public Date getHorario() {
+	public Instant getHorario() {
 		return horario;
 	}
 
-	public void setHorario(Date horario) {
+	public void setHorario(Instant horario) {
 		this.horario = horario;
 	}
 
-	public String getLocal() {
-		return local;
+	public Endereco getEndereco() {
+		return endereco;
 	}
 
-	public void setLocal(String local) {
-		this.local = local;
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
 	}
 
 	public Colaborador getMarcador() {
@@ -63,5 +61,6 @@ public class Procedimento {
 
 	public void setComunicado(Comunicado comunicado) {
 		this.comunicado = comunicado;
-	}	
+	}
+	
 }

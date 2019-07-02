@@ -42,5 +42,22 @@ public class Telefone {
 	public void setTipo(TipoTelefone tipo) {
 		this.tipo = tipo;
 	}
+
+	@Override
+	public String toString() {
+		return "("+ ddd + ") " + numero;
+	}
+	
+	public static Telefone parseToTelefone(String telefone) {
+		Telefone fone=new Telefone();
+		
+		fone.setDdd(telefone.substring(0, 1));
+		fone.setNumero(telefone.substring(2, telefone.length()-1));
+		
+		return fone;
+		
+	}
+	
+	
 	
 }
