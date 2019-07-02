@@ -197,7 +197,12 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 		ResultSet rs=null;
 		
 		try {
-			st=conn.prepareStatement(""
+			st=conn.prepareStatement("select nome, ddd,numero\r\n" + 
+					"from parte join cliente on (cpfcnpj=cpf) join telefone using (cpf)\r\n" + 
+					"where cpf not in (\r\n" + 
+					"	select cpf\r\n" + 
+					"    from ProcessosCliente join procedimento on (num_processo=numprocesso) natural join comunicado);\r\n" + 
+					"    "
 					
 
 
@@ -209,7 +214,10 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 			while(rs.next()) {
 				
 				Cliente cliente = new Cliente();
-				cliente.setTelefone(Telefone.parseToTelefone(rs.getString("ddd").concat(rs.getString("telefone"))));
+				Telefone fone = new Telefone();
+				fone.setDdd(rs.getString("ddd"));
+				fone.setNumero(rs.getString("numero"));
+				cliente.setTelefone(fone);
 				cliente.setNome(rs.getString("nome"));
 				
 				list.add(cliente);

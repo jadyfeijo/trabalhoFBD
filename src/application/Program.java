@@ -9,6 +9,7 @@ import java.util.Scanner;
 import model.dao.ConsultasDao;
 import model.dao.DaoFactory;
 import model.entities.Acao;
+import model.entities.Cliente;
 import model.entities.Prazo;
 import model.entities.Processo;
 
@@ -60,6 +61,14 @@ public class Program {
 		for(Processo p: proc) {
 			for(Prazo pz: p.getPrazos())
 				System.out.println("NumProc: "+p.getNumero() + " Descricao: "+pz.getDescricao() + " Data Fim: "+sdfData.format(pz.getDataFim())+ " Vara: "+ p.getLocal().getVara());
+		}
+		
+		System.out.println("\n------Teste consulta Cilientes a Comunicar------\n");
+		List<Cliente> clientes = consultas.clientesComunicar();
+		
+		for(Cliente c:clientes) {
+		
+			System.out.println("Nome: "+c.getNome() + "\tTelefone: "+c.getTelefone());
 		}
 				
 		
