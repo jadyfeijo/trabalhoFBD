@@ -30,6 +30,19 @@ where cpf not in (
     from ProcessosCliente join procedimento on (num_processo=numprocesso) natural join comunicado);
     
      
+/*Nome do advogado que teve sentença procedente em todos seus processos em um determinado mês.*/
+select oab
+from Advogado as adv join Colaborador on (cpf=cpfAdv)
+where  not exists(
+	select *
+	from  ProcessosAdv natural join processo join  sentenca using (numprocesso)
+	where adv.oab=oab and resultado <>'Procedente') and oab in (
+		select oab
+		from  ProcessosAdv natural join processo join  sentenca using (numprocesso)
+        where month(datasentenca)=3 and year(now()));
+
+
+     
 
 create view SentencaCom as select count(numprocesso) from processo natural join sentenca group by comarca;
 
