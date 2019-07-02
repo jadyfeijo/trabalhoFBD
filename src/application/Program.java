@@ -9,6 +9,7 @@ import java.util.Scanner;
 import model.dao.ConsultasDao;
 import model.dao.DaoFactory;
 import model.entities.Acao;
+import model.entities.Advogado;
 import model.entities.Cliente;
 import model.entities.Prazo;
 import model.entities.Processo;
@@ -70,7 +71,14 @@ public class Program {
 		
 			System.out.println("Nome: "+c.getNome() + "\tTelefone: "+c.getTelefone());
 		}
-				
+			
+		System.out.println("\n------Teste consulta Procedentes-----\n");
+		
+		List<Advogado> adv = consultas.advogadoTodasProcedente(3);
+		
+		for(Advogado a: adv) {
+			System.out.println("Nome: "+a.getNome() + " OAB: "+a.getOab());
+		}
 		
 	}
 

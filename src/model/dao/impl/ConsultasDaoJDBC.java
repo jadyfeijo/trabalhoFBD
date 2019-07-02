@@ -238,7 +238,15 @@ public class ConsultasDaoJDBC implements ConsultasDao{
 		
 		try {
 			st=conn.prepareStatement(
-					""
+					"select nome,oab\r\n" + 
+					"from Advogado as adv join Colaborador on (cpf=cpfAdv)\r\n" + 
+					"where  not exists(\r\n" + 
+					"	select *\r\n" + 
+					"	from  ProcessosAdv natural join processo join  sentenca using (numprocesso)\r\n" + 
+					"	where adv.oab=oab and resultado <>'Procedente') and oab in (\r\n" + 
+					"		select oab\r\n" + 
+					"		from  ProcessosAdv natural join processo join  sentenca using (numprocesso)\r\n" + 
+					"        where month(datasentenca)=? and year(now()));"
 					
 					);
 			
