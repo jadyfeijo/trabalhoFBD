@@ -15,7 +15,7 @@ public class Audiencia extends Procedimento {
 		super();
 	}
 
-	public Audiencia(Date dia, Instant horario, Endereco endereco, Colaborador marcador, Comunicado comunicado,
+	public Audiencia(Date dia, Date horario, Endereco endereco, Colaborador marcador, Comunicado comunicado,
 			TipoAudiencia tipo, Advogado realizador, Local local) {
 		super(dia, horario, endereco, marcador, comunicado);
 		this.tipo = tipo;

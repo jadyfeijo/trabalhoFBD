@@ -1,7 +1,10 @@
+use escritorio;
+
 /*Para cada comarca, a quantidade de processos que tem sentença e quantos foram procedentes contra um determinado réu.*/
-
-
-
+select comarca, count(numprocesso),count(SentencasProcedentes.resultado)
+from processo natural join sentenca left join  SentencasProcedentes using(codsentenca) natural join reu
+where cpfReu = '00011100011100'
+group by comarca;
 
 /*Número do processo, comarca, vara, nome do autor e réu e horário das audiências de um certo advogado em determinado dia.*/
 select numprocesso,hora,dia,codacao,pautor.nome, preu.nome,comarca,vara
@@ -18,7 +21,7 @@ where cpf='00000000001';
 
 /*Número do processo, vara, data final e descrição dos prazos em aberto  de um determinado advogado.*/
 select oanumprocesso,vara,datafim,descricao
-from ProcessosAdv natural join processo join prazo on (numprocesso=num_processo)
+from ProcessosAdv join prazo on (numprocesso=num_processo)
 where datafim>now() and oab='RS074402';
 
 /*Nome e telefone dos clientes que tem um procedimento marcado, mas não possuem comunicado.*/
@@ -35,18 +38,32 @@ select oab
 from Advogado as adv join Colaborador on (cpf=cpfAdv)
 where  not exists(
 	select *
-	from  ProcessosAdv natural join processo join  sentenca using (numprocesso)
+	from  ProcessosAdv join  sentenca using (numprocesso)
 	where adv.oab=oab and resultado <>'Procedente') and oab in (
 		select oab
 		from  ProcessosAdv natural join processo join  sentenca using (numprocesso)
         where month(datasentenca)=3 and year(now()));
+        
+/*Nome dos clientes e o numero de processos  com sentença procedente que não foram pagos.*/
+select nome, numprocesso
+from ProcessosCliente join parte on(cpf=cpfcnpj)
+where numprocesso in (
+	select numprocesso
+    from sentenca
+    where resultado='Procedente' and numprocesso not in(
+			select numProc
+            from pagamento));
+            
+/*Dia, horário,local, vara,comarca e tipo dos procedimentos de um cliente.*/
+    select dia,hora,localP, vara,comarca,procedimento.tipo
+    from ProcessosCliente join procedimento on(numprocesso=num_processo)
+    where cpf ='00000000002' and dia>=now();
 
-
-     
-
-create view SentencaCom as select count(numprocesso) from processo natural join sentenca group by comarca;
+create view SentencasProcedentes as select codsentenca,resultado from sentenca where resultado='Procedente';
 
 create view ProcessosCliente as select * from acao natural join autor natural join reu join cliente on (cpf=cpfAutor or cpf=cpfReu) natural join processo;
 
-create view ProcessosAdv as select codacao, oab from representacao join acao on(cod_acao=codacao) natural join advogado;
+create view ProcessosAdv as select codacao, oab,numprocesso, vara, comarca from representacao join acao on(cod_acao=codacao) natural join advogado natural join processo;
+
+drop view SentencasProcedentes
 
