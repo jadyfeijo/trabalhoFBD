@@ -2,6 +2,7 @@ package model.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import model.entities.Acao;
 import model.entities.Advogado;
@@ -17,9 +18,9 @@ public interface ConsultasDao {
 	List<Prazo> mostrarAndamento (String proc, String cpfCliente);
 	List<Cliente> clientesComunicar();
 	List<Advogado> advogadoTodasProcedente (int mes);
-	
-	List<Processo> procPagar ();
+	List<Cliente> procPagar ();
 	List<Audiencia> mostrarAudienciasCliente (String cpfCliente);
+	Map<String,int[]> sentencasPorComarca (String cpfReu);
 	
 	
 }
