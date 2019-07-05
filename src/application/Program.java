@@ -24,17 +24,38 @@ public class Program {
 		
 		SimpleDateFormat sdfData = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm:ss");
-
-		
 		
 		Scanner sc = new Scanner(System.in);
 		
-		System.out.println("-----Teste consulta Audiencias de Adv em uma data----\n");
 		
-		//System.out.println("oab: ");
-		String oab = "RS108563";//sc.nextLine();
-		//System.out.println("dia: ");
-		Date dia=sdfData.parse("03/08/2019");
+		int op;
+		
+		do {
+			
+			System.out.println("Escolha uma opcao: ");
+			System.out.println("1 - Consultar audiências de um determinado advogado em um dia específico\n"
+					+ "2 - Consultar andamento de um processo de um determinado cliente\n"
+					+ "3 - Consultar prazos em aberto para um determinado advogado\n"
+					+ "4 - Consultar clientes que precisam ser comunicados\n"
+					+ "5 - Consultar o nome de advogados que tiveram apenas sentenças procedentes em um determinado mês\n"
+					+ "6 - Consultar audiências futuras de um determinado cliente\n"
+					+ "7 - Consultar Processos que estão com pagamento pendente\n"
+					+ "8 - Consultar o número de sentenças procedentes por comarca contra um determinado réu\n"
+					+ "9 - Inserir uma nova sentença\n"
+					+ "0 - Sair\n");
+			
+			op = sc.nextInt();
+		
+		switch (op) {
+		
+		case 1:
+		
+		System.out.println("\n-----Consultar audiências de um determinado advogado em um dia específico----\n");
+		
+		System.out.print("OAB: ");
+		String oab =sc.next();
+		System.out.println("Dia (dd/mm/yyy): ");
+		Date dia=sdfData.parse(sc.next());
 		
 		List<Acao> acoes = consultas.mostrarAudienciasAdv(oab, dia);
 		
@@ -43,12 +64,17 @@ public class Program {
 			System.out.println("NumProc: "+a.getProcesso().getNumero()+ " Autor: "+ a.getAutor().get(0).getNome() + " Reu: "+ a.getReu().get(0).getNome()+ " Vara: "+a.getProcesso().getAudiencias().get(0).getLocal().getVara()+
 					" Comarca: "+a.getProcesso().getAudiencias().get(0).getLocal().getComarca() + " Hora: "+sdfHora.format(a.getProcesso().getAudiencias().get(0).getHorario()) );
 		}
+		break;
+		
+		case 2:
 		
 		
+		System.out.println("\n------Consultar andamento de um processo de um determinado cliente-------\n");
 		
-		System.out.println("\n------Teste consulta Andamento-------\n");
-		String numproc = "00111800000002";
-		String cpf = "00000000001";
+		System.out.print("Número do processo: ");
+		String numproc = sc.next();
+		System.out.println("CPF do Cliente (apenas números): ");
+		String cpf = sc.next();
 		
 		List<Prazo> prazo = consultas.mostrarAndamento(numproc, cpf);
 		
@@ -56,8 +82,13 @@ public class Program {
 			System.out.println("Descricao "+ p.getDescricao() + " Data: "+sdfData.format(p.getDataInicio()));
 		}
 		
-		System.out.println("\n------Teste consulta prazos em aberto------\n");
-		oab="RS074402";
+		break;
+		
+		case 3:
+		System.out.println("\n------Consultar prazos em aberto para um determinado advogado------\n");
+		
+		System.out.print("OAB: ");
+		oab =sc.next();
 		
 		List<Processo> proc = consultas.mostrarPrazos(oab);
 		
@@ -66,26 +97,36 @@ public class Program {
 				System.out.println("NumProc: "+p.getNumero() + " Descricao: "+pz.getDescricao() + " Data Fim: "+sdfData.format(pz.getDataFim())+ " Vara: "+ p.getLocal().getVara());
 		}
 		
-		System.out.println("\n------Teste consulta Cilientes a Comunicar------\n");
+		break;
+		
+		case 4:
+			
+		System.out.println("\n------Consultar clientes que precisam ser comunicados------\n");
 		List<Cliente> clientes = consultas.clientesComunicar();
 		
 		for(Cliente c:clientes) {
 		
 			System.out.println("Nome: "+c.getNome() + "\tTelefone: "+c.getTelefone());
 		}
+		break;
+		
+		case 5:
 			
-		System.out.println("\n------Teste consulta Procedentes-----\n");
+		System.out.println("\n------Consultar o nome de advogados que tiveram apenas sentenças procedentes em um determinado mês-----\n");
 		
 		List<Advogado> adv = consultas.advogadoTodasProcedente(3);
 		
 		for(Advogado a: adv) {
 			System.out.println("Nome: "+a.getNome() + " OAB: "+a.getOab());
 		}
+		break;
 		
+
+		case 6:
+		System.out.println("\n-------Consultar audiências futuras de um determinado cliente -------\n");
 		
-		System.out.println("\n-------Teste consulta Audiencia de Cliente -------\n");
-		cpf="00000000002";
-		
+		System.out.println("CPF do Cliente (apenas números): ");
+		cpf = sc.next();
 		List<Audiencia> aud = consultas.mostrarAudienciasCliente(cpf);
 		
 		for(Audiencia a: aud) {
@@ -93,7 +134,11 @@ public class Program {
 					" Vara: "+a.getLocal().getVara() + " Comarca: "+a.getLocal().getComarca() + " Endereco: "+a.getEndereco().getRua());
 		}
 		
-		System.out.println("\n-------Teste consulta Processos a pagar---------\n");
+		break;
+		
+		case 7: 
+		
+		System.out.println("\n-------Consultar Processos que estão com pagamento pendente-------\n");
 		
 		clientes=consultas.procPagar();
 		
@@ -102,9 +147,14 @@ public class Program {
 				System.out.println("Nome: "+c.getNome() + " CPF: "+c.getId() + " Num. Processo: "+a.getProcesso().getNumero());
 		}
 		
-		System.out.println("\n-------Teste consulta Sentencas procedentes de um reu por Comarca------\n");
+		break;
 		
-		String cpfReu="00011100011100";
+		case 8 :
+		
+		System.out.println("\n-------Consultar o número de sentenças procedentes por comarca contra um determinado réu----\n");
+		
+		System.out.print("CPF/CNPJ do Réu (apenas números): ");
+		String cpfReu=sc.next();
 		Map<String,int[]> map=consultas.sentencasPorComarca(cpfReu);
 		
 		for(String comarca: map.keySet()) {
@@ -113,6 +163,17 @@ public class Program {
 			System.out.println(comarca+" \t\t\t "+map.get(comarca)[0] + " \t\t\t "+ map.get(comarca)[1]);
 		}
 		
+		break;
+		
+		case 9:
+			
+			
+			
+			break;
+		
+		}
+		}
+		while(op!=0);
 	}
 
 }
