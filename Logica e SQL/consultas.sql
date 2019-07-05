@@ -3,7 +3,7 @@ use escritorio;
 /*Para cada comarca, a quantidade de processos que tem sentença e quantos foram procedentes contra um determinado réu.*/
 select comarca, count(numprocesso),count(SentencasProcedentes.resultado)
 from processo natural join sentenca left join  SentencasProcedentes using(codsentenca) natural join reu
-where cpfReu = '00011100011100'
+where cpfReu = '00011100011100' 
 group by comarca;
 
 /*Número do processo, comarca, vara, nome do autor e réu e horário das audiências de um certo advogado em determinado dia.*/
@@ -45,7 +45,7 @@ where  not exists(
         where month(datasentenca)=3 and year(now()));
         
 /*Nome dos clientes e o numero de processos  com sentença procedente que não foram pagos.*/
-select nome, numprocesso
+select nome, cpf,numprocesso
 from ProcessosCliente join parte on(cpf=cpfcnpj)
 where numprocesso in (
 	select numprocesso
@@ -54,7 +54,7 @@ where numprocesso in (
 			select numProc
             from pagamento));
             
-/*Dia, horário,local, vara,comarca e tipo dos procedimentos de um cliente.*/
+/*Dia, horário,local, vara,comarca das audiências futuras de um cliente.*/
     select dia,hora,localP, vara,comarca,procedimento.tipo
     from ProcessosCliente join procedimento on(numprocesso=num_processo)
     where cpf ='00000000002' and dia>=now();
