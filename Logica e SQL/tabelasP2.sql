@@ -2,7 +2,8 @@
 create database escritorio;
 /* seleciona o banco de dados */
 use escritorio;
- 
+
+
 create table colaborador
 (nome varchar(50) not null,
 cpf char(11) not null,
@@ -29,7 +30,7 @@ tipo enum ('Cliente','Parte Contrária'),
 primary key(cpfcnpj));
 
 create table endereco(
-codendereco int not null autoincrement, 
+codendereco int not null auto_increment, 
 rua varchar(50) not null,
 numero varchar(10) not null,
 complemento varchar(50),
@@ -48,7 +49,7 @@ cpf varchar(14) not null primary key,
 foreign key(cpf) references parte(cpfcnpj) );
 
 create table Consulta(
- codConsulta int autoincrement not null,
+ codConsulta int auto_increment not null,
  dia date  not null,
  hora time not null,
  nomecliente varchar(50) not null,
@@ -60,11 +61,13 @@ create table Consulta(
  foreign key (cpfcliente) references cliente (cpf),
  unique (dia,hora)
  );
-
+UPDATE consulta 
+SET dia = DATE(STR_TO_DATE(dia, '%m/%d/%Y'))
+WHERE DATE(STR_TO_DATE(dia, '%Y/%m/%d')) <> '0000-00-00';
 
 
 create table telefone(
-codtelefone int not null autoincrement, 
+codtelefone int not null auto_increment, 
 tipo enum('Comercial', 'Residêncial', 'Celular') not null, 
 ddd char(2) not null,
 numero varchar(9) not null, 
@@ -75,7 +78,7 @@ foreign key(cpf) references cliente(cpf));
 
 
 create table documento(
-coddocumento int not null autoincrement,
+coddocumento int not null auto_increment,
 nome varchar(50) not null,
 arquivo blob, 
 tipo enum('Petição','Contrato','Outros'),
@@ -86,7 +89,7 @@ foreign key(cpfCliente) references cliente(cpf));
 
 
 create table pagamento(
-codPagamento int not null autoincrement,
+codPagamento int not null auto_increment,
 valor float not null,
 dataPagamento date not null,
 numProc varchar(25) not null,
@@ -98,7 +101,7 @@ foreign key(cpfCliente) references cliente(cpf));
 
 
 create table acao (
-codacao int not null autoincrement,
+codacao int not null auto_increment,
 area enum('Trabalhista', 'Cível', 'Criminal', 'Previdenciaria') not null, 
 primary key (codacao));
 
@@ -145,7 +148,7 @@ primary key(numprocesso),
 foreign key(codacao) references acao(codacao));
 
 create table procedimento(
-codprocedimento int not null autoincrement,
+codprocedimento int not null auto_increment,
 dia date not null,
 hora time not null,
 localP char(50) not null,
@@ -157,7 +160,7 @@ foreign key(cpfAux) references auxiliar(cpfAux),
 foreign key(numprocesso) references processo(numprocesso));
 
 create table comunicado(
-codcomunicado int not null autoincrement,
+codcomunicado int not null auto_increment,
 dataentrega date,
 informacao varchar(100),
 codprocedimento int not null,
@@ -180,18 +183,16 @@ primary key(codprocedimento),
 foreign key(Codprocedimento) references procedimento(codprocedimento));
 
 create table prazo(
-codprazo int not null autoincrement,
+codprazo int not null auto_increment,
 datainicio date not null,
 datafim date not null, 
 descricao varchar(200) not null,
 numprocesso varchar(25) not null,
-codauxiliar varchar(11) not null,
 primary key (codprazo), 
-foreign key(numprocesso) references processo(numprocesso),
-foreign key(codauxiliar) references colaborador(cpf));
+foreign key(numprocesso) references processo(numprocesso));
 
 create table sentenca(
-codsentenca int not null autoincrement,
+codsentenca int not null auto_increment,
 datasentenca date not null, 
 resultado enum('Procedente','Improcedente','Extinto') not null,
 valor float, 
@@ -245,4 +246,4 @@ foreign key(codpeticao) references peticao(coddocumento)
 );
 
 
-drop table 	
+
