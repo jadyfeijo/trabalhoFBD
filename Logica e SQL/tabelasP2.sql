@@ -3,7 +3,6 @@ create database escritorio;
 /* seleciona o banco de dados */
 use escritorio;
 
-
 create table colaborador
 (nome varchar(50) not null,
 cpf char(11) not null,
@@ -61,9 +60,7 @@ create table Consulta(
  foreign key (cpfcliente) references cliente (cpf),
  unique (dia,hora)
  );
-UPDATE consulta 
-SET dia = DATE(STR_TO_DATE(dia, '%m/%d/%Y'))
-WHERE DATE(STR_TO_DATE(dia, '%Y/%m/%d')) <> '0000-00-00';
+
 
 
 create table telefone(
@@ -91,29 +88,12 @@ foreign key(cpfCliente) references cliente(cpf));
 create table pagamento(
 codPagamento int not null auto_increment,
 valor float not null,
-dataPagamento date not null,
+dataPagamento date,
 numProc varchar(25) not null,
 cpfCliente varchar(14) not null, 
+pago boolean default true,
 primary key (codPagamento),
 foreign key(cpfCliente) references cliente(cpf));
-
- 
-
-
-create table acao (
-codacao int not null auto_increment,
-area enum('Trabalhista', 'Cível', 'Criminal', 'Previdenciaria') not null, 
-primary key (codacao));
-
-
-
-
-create table representacao(
-codacao int not null,
-cpfAdv char(11) not null,
-primary key (codacao,cpfAdv),
-foreign key( codacao) references acao(codacao),
-foreign key(cpfAdv)references advogado(cpfAdv));
 
 
 create table peticao (
@@ -137,6 +117,21 @@ preco float not null,
 honorarios float not null, 
 coddocumento int not null primary key,
 foreign key(coddocumento) references documento(coddocumento));
+
+create table acao (
+codacao int not null auto_increment,
+area enum('Trabalhista', 'Cível', 'Criminal', 'Previdenciaria') not null, 
+coddocumento int not null,
+primary key (codacao),
+foreign key (coddocumento) references contrato(coddocumento));
+
+create table representacao(
+codacao int not null,
+cpfAdv char(11) not null,
+primary key (codacao,cpfAdv),
+foreign key( codacao) references acao(codacao),
+foreign key(cpfAdv)references advogado(cpfAdv));
+
 
 create table processo(
 numprocesso varchar(25) not null, 

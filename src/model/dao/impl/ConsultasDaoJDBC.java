@@ -264,11 +264,17 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 
 		try {
 			st = conn.prepareStatement(
+					"select nome, cpf,numprocesso\r\n" + 
+					"from ProcessosCliente join parte on(cpf=cpfcnpj)\r\n" + 
+					"where numprocesso in (\r\n" + 
+					"	select numprocesso\r\n" + 
+					"    from sentenca\r\n" + 
+					"    where resultado='Procedente' and( numprocesso in(\r\n" + 
+					"			select numprocesso\r\n" + 
+					"            from processo left join pagamento on (numprocesso=numProc )\r\n" + 
+					"            where pago=false) or numprocesso not in(select numProc from pagamento )));\r\n");
+					
 
-					"select nome, cpf,numprocesso\r\n" + "from ProcessosCliente join parte on(cpf=cpfcnpj)\r\n"
-							+ "where numprocesso in (\r\n" + "	select numprocesso\r\n" + "    from sentenca\r\n"
-							+ "    where resultado='Procedente' and numprocesso not in(\r\n"
-							+ "			select numProc\r\n" + "            from pagamento));");
 
 			rs = st.executeQuery();
 
