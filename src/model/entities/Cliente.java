@@ -11,6 +11,7 @@ public class Cliente extends Parte{
 	private Telefone telefone;
 	
 	private List<Acao> acoes = new ArrayList<>();
+	private Pagamento pagamento;
 	
 	public Cliente() {
 		super();
@@ -73,4 +74,16 @@ public class Cliente extends Parte{
 	public void removeAcao(Acao acao) {
 		acoes.add(acao);
 	}
+
+
+
+	public Pagamento getPagamento() {
+		return pagamento;
+	}
+
+	public void setPagamento(Pagamento pagamento) {
+		this.pagamento = pagamento;
+	}
+	
+	
 }

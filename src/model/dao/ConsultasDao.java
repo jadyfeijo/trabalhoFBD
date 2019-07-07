@@ -10,6 +10,7 @@ import model.entities.Audiencia;
 import model.entities.Cliente;
 import model.entities.Prazo;
 import model.entities.Processo;
+import model.entities.Sentenca;
 
 public interface ConsultasDao {
 
@@ -21,6 +22,10 @@ public interface ConsultasDao {
 	List<Cliente> procPagar ();
 	List<Audiencia> mostrarAudienciasCliente (String cpfCliente);
 	Map<String,int[]> sentencasPorComarca (String cpfReu);
+	List<Cliente> getTabelaPagamento();
+	List<Processo> getTabelaSentenca();
+	void inserirSentenca(Sentenca sent, String num);
+	
 	
 	
 }

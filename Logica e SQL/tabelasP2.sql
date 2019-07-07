@@ -201,7 +201,7 @@ foreign key(numprocesso) references processo(numprocesso));
  dia date not null,
  primary key (dia,codPrazo,codPeticao),
  foreign key(codPrazo) references prazo(codprazo),
- foreign key(codPeticao) references documento(coddocumento));
+ foreign key(codPeticao) references peticao(coddocumento));
 
 create table autor(
 cpfAutor varchar(14) not null,

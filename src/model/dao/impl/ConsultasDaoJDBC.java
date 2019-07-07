@@ -1,7 +1,6 @@
 package model.dao.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.mysql.jdbc.Statement;
 
 import db.DB;
 import db.DBException;
@@ -19,10 +20,13 @@ import model.entities.Audiencia;
 import model.entities.Cliente;
 import model.entities.Endereco;
 import model.entities.Local;
+import model.entities.Pagamento;
 import model.entities.Parte;
 import model.entities.Prazo;
 import model.entities.Processo;
+import model.entities.Sentenca;
 import model.entities.Telefone;
+import model.entities.enums.TipoSentenca;
 
 public class ConsultasDaoJDBC implements ConsultasDao {
 
@@ -40,9 +44,9 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 
 		try {
 			st = conn.prepareStatement("select numprocesso,hora,dia,pautor.nome, preu.nome,comarca,vara\r\n"
-					+ "from acao natural join autor join parte as pautor on (pautor.cpfcnpj=cpfAutor) natural join reu join parte as preu on (preu.cpfcnpj=cpfReu)  join processo using (codacao) join procedimento on (numprocesso=num_processo)\r\n"
+					+ "from acao natural join autor join parte as pautor on (pautor.cpfcnpj=cpfAutor) natural join reu join parte as preu on (preu.cpfcnpj=cpfReu)  join processo using (codacao) join procedimento using (numprocesso)\r\n"
 					+ "where procedimento.tipo='Audiencia' and dia=? and codacao in (\r\n" + "	select codacao\r\n"
-					+ "    from representacao join acao on(cod_acao=codacao) natural join advogado\r\n"
+					+ "    from representacao join acao using (codacao) natural join advogado\r\n"
 					+ "    where oab=?);"
 
 			);
@@ -98,7 +102,7 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 
 		try {
 			st = conn.prepareStatement("select numprocesso,vara,datafim,descricao\r\n"
-					+ "from ProcessosAdv natural join processo join prazo on (numprocesso=num_processo)\r\n"
+					+ "from ProcessosAdv join prazo using (numprocesso)\r\n"
 					+ "where datafim>now() and oab=?"
 
 			);
@@ -154,7 +158,8 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 		try {
 			st = conn.prepareStatement(
 
-					"select descricao, datainicio " + "from ProcessosCliente join prazo on numprocesso=num_processo "
+					"select descricao, datainicio " 
+					+ "from ProcessosCliente join prazo using (numprocesso) "
 							+ "where cpf=? and numprocesso=?");
 
 			st.setString(1, cpfCliente);
@@ -189,8 +194,9 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 		try {
 			st = conn.prepareStatement("select nome, ddd,numero\r\n"
 					+ "from parte join cliente on (cpfcnpj=cpf) join telefone using (cpf)\r\n"
-					+ "where cpf not in (\r\n" + "	select cpf\r\n"
-					+ "    from ProcessosCliente join procedimento on (num_processo=numprocesso) natural join comunicado);\r\n");
+					+ "where cpf not in (\r\n"
+					+ "	select cpf\r\n"
+					+ "    from ProcessosCliente join procedimento using (numprocesso) natural join comunicado);\r\n");
 
 			rs = st.executeQuery();
 			List<Cliente> list = new ArrayList<>();
@@ -272,9 +278,8 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 					"    where resultado='Procedente' and( numprocesso in(\r\n" + 
 					"			select numprocesso\r\n" + 
 					"            from processo left join pagamento on (numprocesso=numProc )\r\n" + 
-					"            where pago=false) or numprocesso not in(select numProc from pagamento )));\r\n");
-					
-
+					"            where pago=false) or numprocesso not in(select numProc from pagamento )));"
+					);
 
 			rs = st.executeQuery();
 
@@ -324,7 +329,7 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 			st = conn.prepareStatement(
 
 					"select dia,hora,localP, vara,comarca\r\n"
-							+ "    from ProcessosCliente join procedimento on(numprocesso=num_processo)\r\n"
+							+ "    from ProcessosCliente join procedimento using (numprocesso)\r\n"
 							+ "    where cpf =? and dia>=now() and procedimento.tipo='Audiencia';");
 
 			st.setString(1, cpfCliente);
@@ -402,4 +407,118 @@ public class ConsultasDaoJDBC implements ConsultasDao {
 		}
 	}
 
+	public void inserirSentenca(Sentenca sent, String num) {
+
+		PreparedStatement st = null;
+
+		try {
+
+			st = conn.prepareStatement(
+					" INSERT INTO sentenca (datasentenca,resultado,valor,numprocesso) VALUES (?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+
+			st.setDate(1, new java.sql.Date(sent.getData().getTime()));
+			st.setString(2, sent.getResultado().toString());
+			st.setDouble(3, sent.getValor());
+			st.setString(4, num);
+
+			int rowsAffected = st.executeUpdate();
+
+			if (rowsAffected > 0) {
+
+				ResultSet rs = st.getGeneratedKeys();
+
+				if (rs.next()) {
+					sent.setCodigo(rs.getInt(1));
+				}
+				DB.closeResultSet(rs);
+			}
+
+			else {
+				throw new DBException("Erro! Nenhuma linha inserida");
+			}
+
+		} catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
+
+	}
+
+	public List<Processo> getTabelaSentenca() {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+
+			st = conn.prepareStatement("select * from sentenca");
+
+			rs = st.executeQuery();
+
+			List<Processo> list = new ArrayList<>();
+
+			while (rs.next()) {
+				Sentenca sent = new Sentenca();
+				Processo proc = new Processo();
+
+				sent.setCodigo(rs.getInt(1));
+				sent.setData(new java.util.Date(rs.getDate(2).getTime()));
+				sent.setResultado(TipoSentenca.valueOf(rs.getString(3)));
+				sent.setValor(rs.getFloat(4));
+				proc.setNumero(rs.getString(5));
+				proc.setSentenca(sent);
+
+				list.add(proc);
+
+			}
+
+			return list;
+		} catch (
+
+		SQLException e) {
+			throw new DBException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
+
+	public List<Cliente> getTabelaPagamento() {
+
+		PreparedStatement st = null;
+		ResultSet rs = null;
+
+		try {
+
+			st = conn.prepareStatement("select * from pagamento");
+
+			rs = st.executeQuery();
+
+			List<Cliente> list = new ArrayList<>();
+
+			while (rs.next()) {
+				Pagamento pag = new Pagamento();
+				Cliente cl = new Cliente();
+
+				pag.setCodigo(rs.getInt(1));
+				pag.setValor(rs.getFloat(2));
+				pag.setData(new java.util.Date(rs.getDate(3).getTime()));
+				pag.setNumeroProcesso(rs.getString(4));
+				pag.setPago(rs.getBoolean(6));
+				cl.setId(rs.getString(5));
+				cl.setPagamento(pag);
+
+				list.add(cl);
+
+			}
+
+			return list;
+		} catch (SQLException e) {
+			throw new DBException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
 }
